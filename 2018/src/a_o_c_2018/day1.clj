@@ -3,15 +3,13 @@
 
 (def data-file "resources/day1.txt")
 
-(defn day1 [f]
-  (let [rdr (clojure.java.io/reader f)]
-    (->> (line-seq rdr)
-         (reduce #(+ %1 (Integer/parseInt %2)) 0))))
-
 (def test-data
   (->> (io/reader data-file)
        (line-seq)
        (map #(Integer/parseInt %))))
+
+(defn day1-p1 [lines]
+  (reduce #(+ %1 %2) 0 lines))
 
 (defn day1-p2 [lines]
   (loop [lines (cycle lines)
@@ -24,7 +22,7 @@
                (conj acc fr)
                fr2)))))
 
-(day1 data-file)
+(day1-p1 test-data)
 
 (day1-p2 test-data)
 
