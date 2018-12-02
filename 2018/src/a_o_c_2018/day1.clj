@@ -9,7 +9,7 @@
        (map #(Integer/parseInt %))))
 
 (defn day1-p1 [lines]
-  (reduce #(+ %1 %2) 0 lines))
+  (reduce + lines))
 
 (defn day1-p2 [lines]
   (loop [lines (cycle lines)
