@@ -14,8 +14,6 @@
                   [xx yy])]
     (into #{} tuples)))
 
-(value split (first day3-data))
-
 (def is-pound (sym \#))
 (def is-at (sym \@))
 (def is-colon (sym \:))
