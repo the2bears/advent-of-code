@@ -28,9 +28,9 @@
 
 (defn on-which-side
   "second point with respect to first point"
-  [[x1 y1][x2 y2]]
-  (let [^long dx (- x2 x1)
-        ^long dy (- y2 y1)]
+  [[^long x1 ^long y1][^long x2 ^long y2]]
+  (let [dx (- x2 x1)
+        dy (- y2 y1)]
     (if (= (Math/abs dx) (Math/abs dy))
       ;;;It's on one of the 'slope=1/-1' lines
       (cond
@@ -78,7 +78,7 @@
 (defn blockaded? [c-id m]
   (= 4 (count (blockaded-status c-id m))))
 
-(defn points-at-radius* [[x1 y1] r]
+(defn points-at-radius* [[^long x1 ^long y1] ^long r]
   (if (= 0 r)
     #{[x1 y1]}
     (set (apply concat (for [^long w (range (- 0 r) r)]
@@ -128,16 +128,16 @@
         coords (vals data)
         xs (map first coords)
         ys (map second coords)
-        x-min (apply min xs)
-        x-max (apply max xs)
-        y-min (apply min ys)
-        y-max (apply max ys)
+        ^long x-min (apply min xs)
+        ^long x-max (apply max xs)
+        ^long y-min (apply min ys)
+        ^long y-max (apply max ys)
         pps   (for [x (range x-min (inc x-max))
                     y (range y-min (inc y-max))]
                 [x y])]
     (->> (map #(all-manhattan-distances % pps) coords)
          (apply map +)
-         (filter #(< % 10000))
+         (filter #(< ^long % 10000))
          (count))))
 ;;38670
 
