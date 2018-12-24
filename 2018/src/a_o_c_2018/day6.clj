@@ -22,15 +22,15 @@
   (->> (str/split c #", ")
        (mapv read-string)))
 
-(defn manhattan-dist [[x1 y1][x2 y2]]
+(defn manhattan-dist [[^long x1 ^long y1][^long x2 ^long y2]]
   (+ (Math/abs (- x1 x2))
      (Math/abs (- y1 y2))))
 
 (defn on-which-side
   "second point with respect to first point"
   [[x1 y1][x2 y2]]
-  (let [dx (- x2 x1)
-        dy (- y2 y1)]
+  (let [^long dx (- x2 x1)
+        ^long dy (- y2 y1)]
     (if (= (Math/abs dx) (Math/abs dy))
       ;;;It's on one of the 'slope=1/-1' lines
       (cond
@@ -81,7 +81,7 @@
 (defn points-at-radius* [[x1 y1] r]
   (if (= 0 r)
     #{[x1 y1]}
-    (set (apply concat (for [w (range (- 0 r) r)]
+    (set (apply concat (for [^long w (range (- 0 r) r)]
                          [[(+ x1 w) (+ y1 (- r (Math/abs w)))]
                           [(+ x1 (- 0 w)) (+ y1 (- 0 (- r (Math/abs w))))]])))))
 
@@ -142,3 +142,6 @@
 ;;38670
 
 
+(comment
+  (set! *unchecked-math* :warn-on-boxed)
+  (set! *warn-on-reflection* true))
