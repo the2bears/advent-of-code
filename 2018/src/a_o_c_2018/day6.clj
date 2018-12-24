@@ -119,3 +119,26 @@
         blockaded (filter #(blockaded? % data) (keys data))]
     (apply max (map (partial area-size data) blockaded))))
 ;;5975
+
+(defn all-manhattan-distances [[x y] coords]
+  (map (partial manhattan-dist [x y]) coords))
+
+(defn day6-p2 [data]
+  (let [data (data->map data)
+        coords (vals data)
+        xs (map first coords)
+        ys (map second coords)
+        x-min (apply min xs)
+        x-max (apply max xs)
+        y-min (apply min ys)
+        y-max (apply max ys)
+        pps   (for [x (range x-min (inc x-max))
+                    y (range y-min (inc y-max))]
+                [x y])]
+    (->> (map #(all-manhattan-distances % pps) coords)
+         (apply map +)
+         (filter #(< % 10000))
+         (count))))
+;;38670
+
+
