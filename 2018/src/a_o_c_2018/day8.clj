@@ -37,3 +37,17 @@
     (add-meta-data (build-tree))))
 ;;36027
 
+(defn add-indexed-children [node]
+  (let [ch (:children node)
+        md (:meta-data node)]
+    (if (empty? ch)
+      (apply + md)
+      (let [indexed-children (reduce #(conj %1 (get ch (dec %2)))
+                                     []
+                                     md)]
+        (reduce #(+ %1 (add-indexed-children %2)) 0 indexed-children)))))
+
+(defn day8-p2 [data]
+  (let [_ (reset! tree-data data)]
+    (add-indexed-children (build-tree))))
+;;23960
