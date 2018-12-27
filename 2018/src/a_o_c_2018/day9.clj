@@ -12,17 +12,16 @@
         next-index (if (< next-index 0)
                      (+ next-index (count v))
                      next-index)
-        [left right] (split-at (+ next-index (if special-case? 1 0))  v)
-        left (into [] left)
-        right (into [] right)
+        split-at (+ next-index (if special-case? 1 0))
+        [left right] [(subvec v 0 split-at) (subvec v split-at (count v))]
         score (if special-case?
                 (+ next-value (last left))
                 0)]
     [next-index
      score
      (->> (if special-case?
-            (into (into [] (drop-last left)) right)
-            (into (into left (vector next-value)) right))
+            (into (subvec left 0 (dec (count left))) right)
+            (into (conj left next-value) right))
           (into []))]))
 
 (next-vector 3 4 [0 2 1 3])
@@ -52,8 +51,15 @@
              (into [])
              (sort-by second)
              ((comp last last)))))))      
-                          
-;;(day9-p1 410 72059)
+
+;;10 players; last marble is worth 1618 points: high score is 8317
+;;13 players; last marble is worth 7999 points: high score is 146373
+;;17 players; last marble is worth 1104 points: high score is 2764
+;;21 players; last marble is worth 6111 points: high score is 54718
+;;30 players; last marble is worth 5807 points: high score is 37305
+
+(time (day9-p1 30 5807))
+;;(time (day9-p1 410 72059))
 ;;429287
 
 (comment
