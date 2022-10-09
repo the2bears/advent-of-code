@@ -90,7 +90,9 @@
         sum-not-called (apply + card-numbers-not-called)]
     (* sum-not-called last-called)))
 
-(part1-solution bingo-cards called-numbers)
+(def part1 (part1-solution bingo-cards called-numbers))
+
+(println (str "Answer for Part 1 is " part1))
 
 (defn part2-solution [cards numbers-called]
   (loop [cards-set (into #{} cards)
@@ -111,5 +113,6 @@
               (recur (disj cards-set derived-card)
                      winning-card-meta)))))
     
-(part2-solution bingo-cards called-numbers)
+(def part2 (part2-solution bingo-cards called-numbers))
   
+(println (str "Answer for Part 2 is " part2))
