@@ -48,7 +48,7 @@
       p
       -1)))
           
-(defn check-lowpoints [c m]
+(defn check-lowpoints [c m f]
   (loop [x 0
          y 0
          acc []
@@ -56,12 +56,12 @@
     (cond
       (= y (count c)) acc
       (= x (count (first c))) (recur 0 (+ 1 y) (conj acc row) [])
-      :else (recur (+ 1 x) y acc (conj row (lowpoint-or-zero c x y m))))))
+      :else (recur (+ 1 x) y acc (conj row (f c x y m))))))
 
 (defn part1-fn [d]
   (let [p-d (prep-data d)
         m-h (map-heights p-d)
-        lowpoints (check-lowpoints p-d m-h)]
+        lowpoints (check-lowpoints p-d m-h lowpoint-or-zero)]
     (->> lowpoints
          flatten
          (filter #(>= % 0))
@@ -71,3 +71,58 @@
 (def part1 (part1-fn data))
    
 (println (str "Answer for Part 1 is " part1))
+
+(defn lowpoint-coords [c x y m]
+  (let [p (get-x-y-val c x y)]
+    (when
+        (and (< p (get m [(+ x 1) y] Integer/MAX_VALUE))
+             (< p (get m [(- x 1) y] Integer/MAX_VALUE))
+             (< p (get m [x (+ y 1)] Integer/MAX_VALUE))
+             (< p (get m [x (- y 1)] Integer/MAX_VALUE)))
+      [x y])))
+
+(defn points-to-check [[x y]]
+  (-> (vector (conj [(+ x 1)  y]))
+      (conj [(- x 1) y])
+      (conj [x (+ y 1)])
+      (conj [x (- y 1)])))
+
+(defn basin-neighbors [m-h seen p]
+  (let [h (get m-h p)
+        p-t-c (filter #(and
+                        (<= h (get m-h [(first %) (last %)] Integer/MAX_VALUE))
+                        (< (get m-h [(first %) (last %)] Integer/MAX_VALUE) 9)
+                        (not (contains? seen %)))
+                      (points-to-check p))]
+        ;;_ (println p-t-c)]
+    p-t-c))
+
+(defn basin-points [m-h [x y]]
+  (loop [result []
+         acc [[x y]]
+         seen #{[x y]}]
+    (if-not
+        (seq acc)
+      (count result)
+      (let [p (first acc)
+            neighbors (basin-neighbors m-h seen p)]
+        (recur (conj result p)
+               (rest (into [] (concat acc neighbors)))
+               (reduce conj seen neighbors))))))
+
+(defn part2-fn [d]
+  (let [p-d (prep-data d)
+        m-h (map-heights p-d)
+        lowpoints (->>
+                    (check-lowpoints p-d m-h lowpoint-coords)
+                    (apply concat)
+                    (filter some?))]
+    (->> lowpoints
+         (map #(basin-points m-h %))
+         (sort >)
+         (take 3)
+         (apply *))))
+
+(def part2 (part2-fn data))
+   
+(println (str "Answer for Part 2 is " part2))
