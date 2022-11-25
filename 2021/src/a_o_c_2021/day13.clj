@@ -145,4 +145,20 @@ fold along x=5")
 
 (println (str "Answer for Part 1 is " part1))
 
-        
+(defn part2-fn [d]
+  (let [fold-functions {:y flip-y :x flip-x}
+        pd (prep-data d)
+        folds (:folds pd)
+        res (reduce (fn[acc [f n]]
+                      ((f fold-functions) n acc))
+                    pd
+                    folds)]
+    (->> (:matrix res)
+         (map #(apply str %))
+         (map #(str/replace % #"0" "."))
+         (map #(str/replace % #"1" "#")))))
+
+
+
+(def part2 (part2-fn data))
+
