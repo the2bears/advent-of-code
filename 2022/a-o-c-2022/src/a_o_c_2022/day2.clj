@@ -51,3 +51,22 @@ C Z")
 (def part1 (part1-fn data))
 
 
+(def results {"X" :loss "Y" :draw "Z" :win})
+
+(def what-to-play {:rock {:win :paper :loss :scissors :draw :rock}
+                   :paper {:win :scissors :loss :rock :draw :paper}
+                   :scissors {:win :rock :loss :paper :draw :scissors}})
+
+(defn map-to-play-2 [t]
+  (let [expected-result (get results (last t))
+        their-play (get theirs (first t))]
+    [their-play (get-in what-to-play [their-play expected-result])]))
+
+(defn part2-fn [d]
+  (-> d
+      prep-data
+      (->> (mapv #(map-to-play-2 %))
+           (mapv #(score-game %))
+           (apply +))))
+      
+(def part2 (part2-fn data))
