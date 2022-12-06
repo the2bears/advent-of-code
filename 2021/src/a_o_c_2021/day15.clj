@@ -37,6 +37,26 @@
 (defn matrix [sx sy]
   (mapv (fn[x](mapv (fn[y] 0) (range sx))) (range sy)))
 
+(defn get-x-y-val [c x y]
+  (get (get c y) x))
+
+(defn map-matrix [c]
+  "Takes prep-data"
+  (let [t-m (atom {})]
+    (doseq [x (range (count (first c)))
+            y (range (count c))]
+      (swap! t-m assoc [x y] (get-x-y-val c x y)))
+    @t-m))
+
+(defn matrix [sx sy]
+  (mapv (fn[x](mapv (fn[y] (identity x)) (range sx))) (range sy)))
+
+(defn unmap-matrix [m n]
+  (let [c (matrix n n)]
+    (reduce #(assoc-in %1 [(second %2) (first %2)] (get m %2))
+            c
+            (keys m))))
+
 (defn min-at-x-y [out-m in-m x y]
   (let [enter-risk (get (get in-m y) x)
         current-min (cond
@@ -48,22 +68,6 @@
                                            (get (get out-m y) (- x 1)))))]
       (assoc-in out-m [y x] current-min)))
 
-(defn calculate-min-path [pd x y]
-  (let [risks (atom (matrix x y))]
-    (doseq [y1 (range y)
-            x1 (range x)]
-      (swap! risks min-at-x-y pd x1 y1))
-    @risks))
-    
-(defn part1-fn [d]
-  (let [pd (prep-data d)
-        start-risk (get (get pd 0) 0)
-        x (count (first pd))
-        y (count pd)
-        _ (prn (str "x " x ", y " y))
-        risks (calculate-min-path pd x y)
-        min-risk (last (last risks))]
-    min-risk))
 
 (defn inc-matrix [m]
   (mapv #(mapv (fn[c]
@@ -98,15 +102,4 @@
 
 
 (def t2 (expand-top-five (prep-data test-data) 4))
-
-(defn part2-fn [d]
-  (let [pd d
-        start-risk (get (get pd 0) 0)
-        x (count (first pd))
-        y (count pd)
-        risks (calculate-min-path pd x y)
-        min-risk (- (last (last risks)) start-risk)
-        _ (prn (str "start-risk " start-risk))]
-    min-risk))
-
 
